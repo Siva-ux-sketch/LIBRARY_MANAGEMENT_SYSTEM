@@ -1,216 +1,383 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define MAX 100
 
-int arr[MAX], n = 0;
+struct Book
+{
+    char id[20];
+    char name[50];
+    char author[50];
+    char status[20];
+};
 
-// Display
+struct Book library[MAX];
+int count = 0;
+
+// GET BOOK DETAILS
+struct Book getBook()
+{
+    struct Book b;
+
+    printf("Enter Book ID: ");
+    scanf("%s", b.id);
+
+    printf("Enter Book Name: ");
+    scanf(" %[^\n]", b.name);
+
+    printf("Enter Author: ");
+    scanf(" %[^\n]", b.author);
+
+    strcpy(b.status, "Available");
+
+    return b;
+}
+
+// DISPLAY
 void display()
 {
-    if(n == 0)
-    {
-        printf("\nArray is empty\n");
-        return;
-    }
-
-    printf("\nElements: ");
     int i;
-    for(i = 0; i < n; i++)
-        printf("%d ", arr[i]);
-    printf("\n");
+
+    if(count == 0)
+    {
+        printf("\nNo books available!\n");
+        return;
+    }
+
+    for(i = 0; i < count; i++)
+    {
+        printf("\n%s | %s | %s | %s\n",
+        library[i].id,
+        library[i].name,
+        library[i].author,
+        library[i].status);
+    }
 }
 
-// Insert at beginning
-void insertFirst(int value)
+// SEARCH
+void searchBook()
 {
-    if(n == MAX)
+    int i, found = 0;
+    char key[50];
+
+    printf("Enter Book ID or Name: ");
+    scanf(" %[^\n]", key);
+
+    for(i = 0; i < count; i++)
     {
-        printf("\nArray is full\n");
-        return;
-    }
-    
-    int i;
-    for(i = n; i > 0; i--)
-        arr[i] = arr[i-1];
-
-    arr[0] = value;
-    n++;
-}
-
-// Insert at end
-void insertLast(int value)
-{
-    if(n == MAX)
-    {
-        printf("\nArray is full\n");
-        return;
-    }
-
-    arr[n++] = value;   // simplified
-}
-
-// Insert at position
-void insertAtPos(int value, int pos)
-{
-    if(n == MAX)
-    {
-        printf("\nArray is full\n");
-        return;
-    }
-
-    if(pos < 1 || pos > n+1)
-    {
-        printf("\nInvalid Position\n");
-        return;
-    }
-    
-    int i;
-    for(i = n; i >= pos; i--)
-        arr[i] = arr[i-1];
-
-    arr[pos-1] = value;
-    n++;
-}
-
-// Delete from beginning
-void deleteFirst()
-{
-    if(n == 0)
-    {
-        printf("\nArray is empty\n");
-        return;
-    }
-
-    int i;
-    for(i = 0; i < n-1; i++)
-        arr[i] = arr[i+1];
-
-    n--;
-}
-
-// Delete from end
-void deleteLast()
-{
-    if(n == 0)
-    {
-        printf("\nArray is empty\n");
-        return;
-    }
-
-    n--;
-}
-
-// Delete at position
-void deleteAtPos(int pos)
-{
-    if(n == 0)
-    {
-        printf("\nArray is empty\n");
-        return;
-    }
-
-    if(pos < 1 || pos > n)
-    {
-        printf("\nInvalid Position\n");
-        return;
-    }
-    
-    int i;
-    for(i = pos-1; i < n-1; i++)
-        arr[i] = arr[i+1];
-
-    n--;
-}
-
-// Search
-void search(int value)
-{
-    int found = 0;
-    int i;
-    for(i = 0; i < n; i++)
-    {
-        if(arr[i] == value)
+        if(strcmp(library[i].id, key) == 0 ||
+           strcmp(library[i].name, key) == 0)
         {
-            printf("\nElement found at position %d\n", i+1);
+            printf("\nFound: %s | %s | %s | %s\n",
+            library[i].id,
+            library[i].name,
+            library[i].author,
+            library[i].status);
             found = 1;
         }
     }
 
-    if(found == 0)
-        printf("\nElement not found\n");
+    if(!found)
+        printf("Book not found!\n");
 }
 
-// Main
-int main()
+// ISSUE
+void issueBook()
 {
-    int choice, value, pos;
+    int i;
+    char id[20];
 
-    while(1)
+    printf("Enter Book ID: ");
+    scanf("%s", id);
+
+    for(i = 0; i < count; i++)
     {
-        printf("\n--- ARRAY OPERATIONS ---\n");
-        printf("1. Insert at First\n");
-        printf("2. Insert at Last\n");
-        printf("3. Insert at Position\n");
-        printf("4. Delete from First\n");
-        printf("5. Delete from Last\n");
-        printf("6. Delete from Position\n");
-        printf("7. Search Element\n");
-        printf("8. Display\n");
-        printf("9. Exit\n");
-
-        printf("Enter choice: ");
-        scanf("%d", &choice);
-
-        switch(choice)
+        if(strcmp(library[i].id, id) == 0)
         {
-            case 1:
-                printf("Enter value: ");
-                scanf("%d", &value);
-                insertFirst(value);
-                break;
-
-            case 2:
-                printf("Enter value: ");
-                scanf("%d", &value);
-                insertLast(value);
-                break;
-
-            case 3:
-                printf("Enter value & position: ");
-                scanf("%d %d", &value, &pos);
-                insertAtPos(value, pos);
-                break;
-
-            case 4:
-                deleteFirst();
-                break;
-
-            case 5:
-                deleteLast();
-                break;
-
-            case 6:
-                printf("Enter position: ");
-                scanf("%d", &pos);
-                deleteAtPos(pos);
-                break;
-
-            case 7:
-                printf("Enter element to search: ");
-                scanf("%d", &value);
-                search(value);
-                break;
-
-            case 8:
-                display();
-                break;
-
-            case 9:
-                printf("Exiting...\n");
-                return 0;
-
-            default:
-                printf("Invalid choice\n");
+            if(strcmp(library[i].status, "Available") == 0)
+            {
+                strcpy(library[i].status, "Issued");
+                printf("Book Issued!\n");
+            }
+            else
+                printf("Already Issued!\n");
+            return;
         }
     }
+
+    printf("Book not found!\n");
+}
+
+// RETURN
+void returnBook()
+{
+    int i;
+    char id[20];
+
+    printf("Enter Book ID: ");
+    scanf("%s", id);
+
+    for(i = 0; i < count; i++)
+    {
+        if(strcmp(library[i].id, id) == 0)
+        {
+            if(strcmp(library[i].status, "Issued") == 0)
+            {
+                strcpy(library[i].status, "Available");
+                printf("Book Returned!\n");
+            }
+            else
+                printf("Book was not issued!\n");
+            return;
+        }
+    }
+
+    printf("Book not found!\n");
+}
+
+// AVAILABLE BOOKS
+void availableBooks()
+{
+    int i, found = 0;
+
+    for(i = 0; i < count; i++)
+    {
+        if(strcmp(library[i].status, "Available") == 0)
+        {
+            printf("\n%s | %s | %s\n",
+            library[i].id,
+            library[i].name,
+            library[i].author);
+            found = 1;
+        }
+    }
+
+    if(!found)
+        printf("No available books!\n");
+}
+
+// INSERT (ALL IN ONE)
+void insertBook()
+{
+    int choice, pos, i, j;
+    char id[20];
+
+    if(count == MAX)
+    {
+        printf("Library full!\n");
+        return;
+    }
+
+    printf("\n--- INSERT MENU ---\n");
+    printf("1. Beginning\n");
+    printf("2. End\n");
+    printf("3. At Position\n");
+    printf("4. Before ID\n");
+    printf("5. After ID\n");
+    printf("Enter choice: ");
+    scanf("%d", &choice);
+
+    struct Book b = getBook();
+
+    switch(choice)
+    {
+        case 1:
+            for(i = count; i > 0; i--)
+                library[i] = library[i-1];
+
+            library[0] = b;
+            count++;
+            break;
+
+        case 2:
+            library[count++] = b;
+            break;
+
+        case 3:
+            printf("Enter position: ");
+            scanf("%d", &pos);
+
+            if(pos < 0 || pos > count)
+            {
+                printf("Invalid position!\n");
+                return;
+            }
+
+            for(i = count; i > pos; i--)
+                library[i] = library[i-1];
+
+            library[pos] = b;
+            count++;
+            break;
+
+        case 4:
+            printf("Enter Book ID: ");
+            scanf("%s", id);
+
+            for(i = 0; i < count; i++)
+            {
+                if(strcmp(library[i].id, id) == 0)
+                {
+                    for(j = count; j > i; j--)
+                        library[j] = library[j-1];
+
+                    library[i] = b;
+                    count++;
+                    return;
+                }
+            }
+            printf("Book not found!\n");
+            break;
+
+        case 5:
+            printf("Enter Book ID: ");
+            scanf("%s", id);
+
+            for(i = 0; i < count; i++)
+            {
+                if(strcmp(library[i].id, id) == 0)
+                {
+                    for(j = count; j > i+1; j--)
+                        library[j] = library[j-1];
+
+                    library[i+1] = b;
+                    count++;
+                    return;
+                }
+            }
+            printf("Book not found!\n");
+            break;
+
+        default:
+            printf("Invalid choice!\n");
+    }
+}
+
+// DELETE (ALL IN ONE)
+void deleteBook()
+{
+    int choice, pos, i, j;
+    char id[20];
+
+    if(count == 0)
+    {
+        printf("No books to delete!\n");
+        return;
+    }
+
+    printf("\n--- DELETE MENU ---\n");
+    printf("1. First\n");
+    printf("2. Last\n");
+    printf("3. At Position\n");
+    printf("4. By ID\n");
+    printf("5. Before ID\n");
+    printf("Enter choice: ");
+    scanf("%d", &choice);
+
+    switch(choice)
+    {
+        case 1:
+            for(i = 0; i < count-1; i++)
+                library[i] = library[i+1];
+            count--;
+            break;
+
+        case 2:
+            count--;
+            break;
+
+        case 3:
+            printf("Enter position: ");
+            scanf("%d", &pos);
+
+            if(pos < 0 || pos >= count)
+            {
+                printf("Invalid position!\n");
+                return;
+            }
+
+            for(i = pos; i < count-1; i++)
+                library[i] = library[i+1];
+
+            count--;
+            break;
+
+        case 4:
+            printf("Enter Book ID: ");
+            scanf("%s", id);
+
+            for(i = 0; i < count; i++)
+            {
+                if(strcmp(library[i].id, id) == 0)
+                {
+                    for(j = i; j < count-1; j++)
+                        library[j] = library[j+1];
+
+                    count--;
+                    return;
+                }
+            }
+            printf("Book not found!\n");
+            break;
+
+        case 5:
+            printf("Enter Book ID: ");
+            scanf("%s", id);
+
+            for(i = 1; i < count; i++)
+            {
+                if(strcmp(library[i].id, id) == 0)
+                {
+                    for(j = i-1; j < count-1; j++)
+                        library[j] = library[j+1];
+
+                    count--;
+                    return;
+                }
+            }
+            printf("Cannot delete!\n");
+            break;
+
+        default:
+            printf("Invalid choice!\n");
+    }
+}
+
+// MAIN
+int main()
+{
+    int ch;
+
+    do
+    {
+        printf("\n===== LIBRARY SYSTEM =====\n");
+        printf("1. Insert Book\n");
+        printf("2. Delete Book\n");
+        printf("3. Display Books\n");
+        printf("4. Search Book\n");
+        printf("5. Issue Book\n");
+        printf("6. Return Book\n");
+        printf("7. Available Books\n");
+        printf("8. Exit\n");
+
+        printf("Enter choice: ");
+        scanf("%d", &ch);
+
+        switch(ch)
+        {
+            case 1: insertBook(); break;
+            case 2: deleteBook(); break;
+            case 3: display(); break;
+            case 4: searchBook(); break;
+            case 5: issueBook(); break;
+            case 6: returnBook(); break;
+            case 7: availableBooks(); break;
+            case 8: exit(0);
+            default: printf("Invalid choice!\n");
+        }
+
+    } while(ch != 8);
+
+    return 0;
 }
